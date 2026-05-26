@@ -1,11 +1,11 @@
-# se-scann-dev.github.io
+# se-scan-dev.github.io
 
-Controlled web fixtures for the [Usercentrics V3+ Scanner](https://github.com/AG-UC/scan-e2e)
-regression suite. Each variant is a self-contained page designed to exercise a specific aspect of
-scanner behaviour.
+Static test pages for the Usercentrics V3+ Scanner regression suite. Each variant is a
+self-contained page designed to exercise a specific aspect of scanner behaviour.
 
-**Live**: <https://ag-uc.github.io/se-scann-dev.github.io/>
-**Consumer**: <https://github.com/AG-UC/scan-e2e>
+**Live**: <https://ag-uc.github.io/se-scan-dev.github.io/>
+**Consumer (scan-e2e suite)**: <https://bitbucket.org/usercentricscode/scan-e2e>
+(planned canonical location alongside other SE repos)
 
 ## Variants
 
@@ -17,20 +17,20 @@ scanner behaviour.
 Future variants will land in their own subdirectories — for example `/redirects/`,
 `/late-tracker/`, `/query-param/`.
 
-## Default-services fixture (`default/`)
+## Default-services test page (`default/`)
 
 | # | Service | Category | How it loads |
 | --- | --- | --- | --- |
 | 1 | Usercentrics CMP V3 (sandbox) | Essential | `<script src=…/ui/loader.js>` |
-| 2 | Usercentrics Autoblocker | Essential | `<script src=…/autoblocker.js>` |
-| 3 | Google reCAPTCHA | Essential | `<script src=…/recaptcha/api.js>` + image fixture |
-| 4 | YouTube | Functional | `<iframe src=youtube.com/embed/…>` |
-| 5 | Vimeo | Functional | `<iframe src=player.vimeo.com/video/…>` |
-| 6 | Google Maps | Functional | `<iframe src=google.com/maps/embed?…>` |
-| 7 | Google Analytics (GA4) | Marketing | `<script async src=googletagmanager.com/gtag/js?id=G-…>` |
-| 8 | Google Tag Manager | Marketing | direct `gtm.js` loader |
-| 9 | Hotjar | Marketing | direct `static.hotjar.com/c/hotjar-….js` loader |
-| 10 | Facebook / Meta Pixel | Marketing | direct `connect.facebook.net/.../fbevents.js` loader |
+| 2 | Google reCAPTCHA | Essential | `<script src=…/recaptcha/api.js>` + image |
+| 3 | YouTube | Functional | `<iframe src=youtube.com/embed/…>` |
+| 4 | Vimeo | Functional | `<iframe src=player.vimeo.com/video/…>` |
+| 5 | Google Maps | Functional | `<iframe src=google.com/maps/embed?…>` |
+| 6 | Google Analytics (GA4) | Marketing | `<script async src=googletagmanager.com/gtag/js?id=G-…>` |
+| 7 | Google Tag Manager | Marketing | direct `gtm.js` loader |
+| 8 | Hotjar | Marketing | direct `static.hotjar.com/c/hotjar-….js` loader |
+| 9 | Facebook / Meta Pixel | Marketing | direct `connect.facebook.net/.../fbevents.js` loader |
+| 10 | LinkedIn Insight Tag | Marketing | direct `snap.licdn.com/li.lms-analytics/insight.min.js` loader |
 
 All loaded as plain `<script src>` / `<iframe src>` / `<link>` tags — no `type="text/plain"` /
 `data-usercentrics` consent gating. Services fire on page load and are directly observable by
@@ -49,12 +49,5 @@ the scanner.
 
 1. Create `<scenario-name>/index.html` — self-contained.
 2. Document what scanner behaviour it exercises in the table above.
-3. Add the corresponding manifest in [`scan-e2e/manifests/`](https://github.com/AG-UC/scan-e2e/tree/main/manifests).
-4. Add a test that consumes the manifest in [`scan-e2e/tests/`](https://github.com/AG-UC/scan-e2e/tree/main/tests).
-
-## Why this repo's name
-
-The user-page URL pattern `<owner>.github.io` is only available if the repo is named exactly that
-for a given account. This repo is hosted under `AG-UC` and named `se-scann-dev.github.io` for
-naming consistency with the broader SE scanner ecosystem; it is served as a *project* page at
-`https://ag-uc.github.io/se-scann-dev.github.io/` (not as a user page).
+3. Add the corresponding manifest in the `scan-e2e` Bitbucket repo (`manifests/`).
+4. Add a test that consumes the manifest in `scan-e2e` (`tests/`).
