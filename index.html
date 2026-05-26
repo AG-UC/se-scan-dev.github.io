@@ -1,37 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-    
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width" , initial-scale="1.0">
-    <title>My CMP v3 Testpage</title>
-    
-    <!-- CMP v.3 script -->
-    <script id="usercentrics-cmp" src="https://web.cmp.usercentrics.eu/ui/loader.js" data-settings-id="Lkbl5IxYS91lbn" data-sandbox=1 async></script>
-    <!-- End CMP v.3 script -->
-    
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>scan-e2e test fixtures</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; }
+    code { background: #f0f0f0; padding: 0.1rem 0.3rem; border-radius: 3px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ddd; padding: 0.4rem 0.6rem; text-align: left; }
+    th { background: #f6f6f6; }
+  </style>
 </head>
-
 <body>
-    <h1>Usercentrics CMP V3 Test Page</h1>
-    <img width="250" height="250" src="https://usercentrics.com/wp-content/uploads/2020/04/190208-UCS-Logo-800px.png" alt="uc-logo">
+  <h1>scan-e2e test fixtures</h1>
+  <p>
+    Controlled web fixtures for the Usercentrics V3+ Scanner regression suite.
+    Each variant is a self-contained page designed to exercise a specific
+    aspect of scanner behaviour. Source-of-truth lives at
+    <a href="https://github.com/AG-UC/se-scann-dev.github.io">github.com/AG-UC/se-scann-dev.github.io</a>;
+    the suite that consumes these pages is
+    <a href="https://github.com/AG-UC/scan-e2e">github.com/AG-UC/scan-e2e</a>.
+  </p>
 
-    <!-- All Embeddings are below -->
-      <h1> reCAPTCHA V3 simulation </h1>
-      <p>This DPS is marked "Essential" should always be unblocked by default </p>
-      <p>This is just a picture, which should be unblocked, if reCAPTCHA V3 consent is given.</p>
-      <img src="https://developers.google.com/static/recaptcha/images/newCaptchaAnchor.gif" id="reCaptchaV3" width="560">
-    
-      <h1> Vimeo </h1>
-      <p> This is an embedding from Vimeo</p>
-      <iframe src="https://player.vimeo.com/video/744979938?h=e4e0289444&app_id=122963" id="vimeo" width="426" height="240" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="Produktvideo"></iframe>
-      
-      <h1> YouTube Embedding </h1>
-      <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/DWcJFNfaw9c" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-      
-      <h1> Google Maps Embedding </h1>
-      <iframe width="560" height="315" src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d42550.78176913606!2d11.6391936!3d48.198451199999994!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sde!4v1627274483897!5m2!1sen!2sde" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-    <!-- End Embeddings -->
+  <h2>Variants</h2>
+  <table>
+    <thead>
+      <tr><th>Path</th><th>Scope</th><th>Notes</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a href="default/">default/</a></td>
+        <td>10 commonly-deployed services across Essential / Functional / Marketing</td>
+        <td>Baseline regression target (current).</td>
+      </tr>
+      <!-- future variants will appear here: /redirects/, /late-tracker/, /query-param/, … -->
+    </tbody>
+  </table>
+
+  <h2>Conventions</h2>
+  <ul>
+    <li>One subdirectory per scenario. Each subdirectory ships its own self-contained <code>index.html</code>.</li>
+    <li>Pages are served from <code>main</code> on GitHub Pages — no build step.</li>
+    <li>All variants load the Usercentrics V3 sandbox CMP with settingsId <code>tPIg6i7JCCD-va</code> unless a scenario specifically tests a different setup.</li>
+    <li>Services are loaded as plain <code>&lt;script src&gt;</code> / <code>&lt;iframe&gt;</code> / <code>&lt;link&gt;</code> tags. Autoblock-style <code>type="text/plain" data-usercentrics</code> is reserved for scenarios that explicitly test that behaviour.</li>
+  </ul>
 </body>
-
 </html>
