@@ -4,7 +4,7 @@ Static test pages for the Usercentrics V3+ Scanner regression suite. Each varian
 self-contained page designed to exercise a specific aspect of scanner behaviour.
 
 **Live**: <https://ag-uc.github.io/se-scan-dev.github.io/>
-**Consumer (scan-e2e suite)**: <https://bitbucket.org/usercentricscode/scan-e2e>
+**Consumer (scan-e2e-tests suite)**: <https://bitbucket.org/usercentricscode/scan-e2e-tests>
 (planned canonical location alongside other SE repos)
 
 ## Variants
@@ -49,5 +49,5 @@ the scanner.
 
 1. Create `<scenario-name>/index.html` — self-contained.
 2. Document what scanner behaviour it exercises in the table above.
-3. Add the corresponding manifest in the `scan-e2e` Bitbucket repo (`manifests/`).
-4. Add a test that consumes the manifest in `scan-e2e` (`tests/`).
+3. Add the corresponding manifest in the `scan-e2e-tests` Bitbucket repo (`manifests/`).
+4. Add a test that consumes the manifest in `scan-e2e-tests` (`tests/`).
