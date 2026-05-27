@@ -72,13 +72,20 @@
 <body>
   <h1>scan-e2e-tests missing-one test page</h1>
   <p>
-    Variant of <a href="../default/">/default/</a> with LinkedIn Insight Tag
+    Variant of <code>/default/</code> with LinkedIn Insight Tag
     <strong>intentionally omitted</strong>. Used by the scan-e2e-tests
     threshold-tolerance scenario: the test still expects all 10 services and
     the report should surface LinkedIn as missing — but the test passes thanks
     to the 90% threshold.
-    Source: <a href="https://github.com/AG-UC/se-scan-dev.github.io">github.com/AG-UC/se-scan-dev.github.io</a>.
-    Consumer: <a href="https://bitbucket.org/usercentricscode/scan-e2e-tests">bitbucket.org/usercentricscode/scan-e2e-tests</a>.
+  </p>
+
+  <p style="font-size: 0.9em; color: #555;">
+    <strong>No anchor links to sibling variants on purpose.</strong> If
+    <code>maximum_pages_to_scan &gt; 1</code> and this page links to
+    <code>/default/</code>, the scanner crawls it and re-detects the omitted
+    service from there. Variants stay self-contained.
+    Source (no anchor — URL-only): https://github.com/AG-UC/se-scan-dev.github.io.
+    Consumer: https://bitbucket.org/usercentricscode/scan-e2e-tests.
   </p>
 
   <h2>Essential</h2>
