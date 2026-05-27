@@ -13,6 +13,7 @@ self-contained page designed to exercise a specific aspect of scanner behaviour.
 | --- | --- | --- |
 | `/` | Landing page with nav | Minimal scripts; not a scan target. |
 | `default/` | 10 commonly-deployed services across Essential / Functional / Marketing | Baseline regression target. |
+| `missing-one/` | Same 10 services with LinkedIn Insight Tag intentionally absent | Threshold-tolerance target. The consuming scenario still expects all 10 services with a 90% threshold — so 9/10 passes and the missing service is surfaced in the detection report for manual verification. |
 
 Future variants will land in their own subdirectories — for example `/redirects/`,
 `/late-tracker/`, `/query-param/`.
@@ -49,5 +50,7 @@ the scanner.
 
 1. Create `<scenario-name>/index.html` — self-contained.
 2. Document what scanner behaviour it exercises in the table above.
-3. Add the corresponding manifest in the `scan-e2e-tests` Bitbucket repo (`manifests/`).
-4. Add a test that consumes the manifest in `scan-e2e-tests` (`tests/`).
+3. Add the corresponding scenario YAML in the `scan-e2e-tests` Bitbucket repo
+   (`tests/scenarios/`).
+4. Add a spec that consumes the scenario in `scan-e2e-tests` (`tests/sanity/` or
+   `tests/regression/`).

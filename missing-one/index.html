@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>scan-e2e-tests missing-one test page</title>
+
+  <!--
+    Variant of default/ with ONE service intentionally absent (LinkedIn Insight
+    Tag). Exercised by the scan-e2e-tests threshold-tolerance scenario: the
+    consuming scenario YAML still declares all 10 services as expected, with a
+    90% threshold — so a single absence passes while the detection report
+    surfaces the missing service for a human to verify.
+    Source: https://github.com/AG-UC/se-scan-dev.github.io
+    Consumer (scan-e2e-tests suite): https://bitbucket.org/usercentricscode/scan-e2e-tests
+  -->
+
+  <!-- 1. Usercentrics CMP V3 (Essential) — sandbox loader + settingsId -->
+  <script id="usercentrics-cmp"
+          src="https://web.cmp.usercentrics-sandbox.eu/ui/loader.js"
+          data-sandbox="true"
+          data-settings-id="tPIg6i7JCCD-va"
+          async></script>
+
+  <!-- 2. Google reCAPTCHA (Essential) -->
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+  <!-- 6. Google Analytics (GA4 / Marketing) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-T8M5HE7K9P"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-T8M5HE7K9P');
+  </script>
+
+  <!-- 7. Google Tag Manager (Marketing) -->
+  <script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-KWX2R8K9');
+  </script>
+
+  <!-- 8. Hotjar (Marketing) -->
+  <script>
+    (function(h,o,t,j,a,r){
+      h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+      h._hjSettings={hjid:3000000,hjsv:6};
+      a=o.getElementsByTagName('head')[0];
+      r=o.createElement('script');r.async=1;
+      r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+      a.appendChild(r);
+    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+  </script>
+
+  <!-- 9. Facebook / Meta Pixel (Marketing) -->
+  <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '0000000000000000');
+    fbq('track', 'PageView');
+  </script>
+
+  <!-- 10. LinkedIn Insight Tag — INTENTIONALLY OMITTED in this variant. -->
+</head>
+
+<body>
+  <h1>scan-e2e-tests missing-one test page</h1>
+  <p>
+    Variant of <a href="../default/">/default/</a> with LinkedIn Insight Tag
+    <strong>intentionally omitted</strong>. Used by the scan-e2e-tests
+    threshold-tolerance scenario: the test still expects all 10 services and
+    the report should surface LinkedIn as missing — but the test passes thanks
+    to the 90% threshold.
+    Source: <a href="https://github.com/AG-UC/se-scan-dev.github.io">github.com/AG-UC/se-scan-dev.github.io</a>.
+    Consumer: <a href="https://bitbucket.org/usercentricscode/scan-e2e-tests">bitbucket.org/usercentricscode/scan-e2e-tests</a>.
+  </p>
+
+  <h2>Essential</h2>
+  <ul>
+    <li>Usercentrics CMP V3 (sandbox, settingsId <code>tPIg6i7JCCD-va</code>)</li>
+    <li>Google reCAPTCHA (script loaded above; image below)
+      <br><img src="https://developers.google.com/static/recaptcha/images/newCaptchaAnchor.gif"
+               id="reCaptchaV3" alt="reCAPTCHA" width="280">
+    </li>
+  </ul>
+
+  <h2>Functional</h2>
+
+  <h3>YouTube</h3>
+  <iframe src="https://www.youtube.com/embed/DWcJFNfaw9c"
+          width="426" height="240" frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+
+  <h3>Vimeo</h3>
+  <iframe src="https://player.vimeo.com/video/744979938"
+          width="426" height="240" frameborder="0"
+          allow="autoplay; fullscreen; picture-in-picture"
+          allowfullscreen></iframe>
+
+  <h3>Google Maps</h3>
+  <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d42550.78176913606!2d11.6391936!3d48.198451199999994!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sde!4v1627274483897!5m2!1sen!2sde"
+          width="426" height="240" frameborder="0" allowfullscreen></iframe>
+
+  <h2>Marketing</h2>
+  <p>Loaded in the document head: Google Analytics (GA4), Google Tag Manager, Hotjar, Facebook / Meta Pixel. <strong>LinkedIn Insight Tag is intentionally absent.</strong></p>
+  <noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KWX2R8K9"
+            height="0" width="0" style="display:none;visibility:hidden"></iframe>
+  </noscript>
+
+</body>
+</html>
