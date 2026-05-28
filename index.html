@@ -39,6 +39,11 @@
         <td>Same 10 services with LinkedIn Insight Tag intentionally absent</td>
         <td>Threshold-tolerance target: the consuming scenario expects all 10 with a 90% threshold, so 9/10 passes and the missing service is surfaced in the detection report.</td>
       </tr>
+      <tr>
+        <td><a href="cookiebot-smoke/">cookiebot-smoke/</a></td>
+        <td>YouTube-only (sets <code>YSC</code> + <code>VISITOR_INFO1_LIVE</code>)</td>
+        <td>Cookiebot-pipeline smoke for the SE-3091 / CTS-4295 <code>scan-adapter</code> cookie-purpose cache-aliasing fix. Configure as start URL of a Cookiebot dev test customer; assert <code>YSC</code> ends up with a non-empty <code>CookiePurposes</code> in the resulting declaration.</td>
+      </tr>
       <!-- future variants will appear here: /redirects/, /late-tracker/, /query-param/, … -->
     </tbody>
   </table>
