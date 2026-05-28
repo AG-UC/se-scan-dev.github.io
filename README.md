@@ -14,7 +14,6 @@ self-contained page designed to exercise a specific aspect of scanner behaviour.
 | `/` | Landing page with nav | Minimal scripts; not a scan target. |
 | `default/` | 10 commonly-deployed services across Essential / Functional / Marketing | Baseline regression target. |
 | `missing-one/` | Same 10 services with LinkedIn Insight Tag intentionally absent | Threshold-tolerance target. The consuming scenario still expects all 10 services with a 90% threshold — so 9/10 passes and the missing service is surfaced in the detection report for manual verification. |
-| `cookiebot-smoke/` | YouTube-only page (sets `YSC` + `VISITOR_INFO1_LIVE`) | Smoke target for the **Cookiebot pipeline**, specifically the [SE-3091 / CTS-4295](https://usercentrics.atlassian.net/browse/SE-3091) `scan-adapter` cookie-purpose cache-aliasing fix. Configure as the start URL of a Cookiebot dev test customer; verify `YSC` has a non-empty `CookiePurposes` after scan. See [`cookiebot-smoke/README.md`](./cookiebot-smoke/README.md). |
 
 Future variants will land in their own subdirectories — for example `/redirects/`,
 `/late-tracker/`, `/query-param/`.
