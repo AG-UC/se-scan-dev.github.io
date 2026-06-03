@@ -39,7 +39,21 @@
         <td>Same 10 services with LinkedIn Insight Tag intentionally absent</td>
         <td>Threshold-tolerance target: the consuming scenario expects all 10 with a 90% threshold, so 9/10 passes and the missing service is surfaced in the detection report.</td>
       </tr>
-      <!-- future variants will appear here: /redirects/, /late-tracker/, /query-param/, … -->
+      <tr>
+        <td><a href="query-param/">query-param/</a></td>
+        <td>Minimal target that reflects <code>location.search</code></td>
+        <td>Regression target for the scan-api <code>httpRequestInjections</code> feature (SE-3076). The suite injects query parameters and asserts they reach the scanned URL.</td>
+      </tr>
+      <tr>
+        <td><a href="late-tracker/">late-tracker/</a></td>
+        <td>Pinterest Tag (<code>s.pinimg.com</code>) injected ~5s after load</td>
+        <td>Regression target verifying the scanner's delayed-activity observation window still records a late-firing tracker.</td>
+      </tr>
+      <tr>
+        <td><a href="redirects/">redirects/</a></td>
+        <td>Client-side redirect to <code>redirects-target/</code> (Bing UET, <code>bat.bing.com</code>)</td>
+        <td>Regression target verifying the scanner follows a same-domain redirect and scans the destination. Client-side redirect only — GitHub Pages cannot emit a real HTTP 301/302.</td>
+      </tr>
     </tbody>
   </table>
 

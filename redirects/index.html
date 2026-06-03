@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>scan-e2e-tests redirects test page</title>
+
+  <!--
+    Entry page for the scan-e2e-tests `redirects` regression scenario. It
+    redirects to ./../redirects-target/, which hosts a distinctive tracker
+    (Microsoft Bing UET, bat.bing.com). The scenario asserts that tracker is
+    detected — i.e. the scanner followed the redirect and scanned the
+    destination within the same domain (scan-meta page-count-logic: "follow the
+    redirect; original counted, target also scanned").
+
+    CAVEAT — not a real HTTP 301/302. GitHub Pages is a static host and cannot
+    emit a 3xx status. This page approximates a redirect client-side (meta
+    refresh + JS location.replace), which a real browser (and the Playwright-
+    based scanner) follows. It therefore verifies "scanner follows a same-domain
+    navigation redirect and scans the destination", which is close to but not
+    identical to HTTP-3xx following. True 301/302 following is covered by the
+    scanner's own tests and would need a host that can emit 3xx.
+
+    Source: https://github.com/AG-UC/se-scan-dev.github.io
+    Consumer: https://bitbucket.org/usercentricscode/scan-e2e-tests
+  -->
+  <meta http-equiv="refresh" content="0; url=../redirects-target/">
+  <link rel="canonical" href="../redirects-target/">
+  <script>
+    // Belt-and-braces client-side redirect.
+    location.replace('../redirects-target/');
+  </script>
+</head>
+
+<body>
+  <h1>Redirecting…</h1>
+  <p>
+    This page redirects to <a href="../redirects-target/">redirects-target/</a>.
+    If you are not redirected automatically, follow the link.
+  </p>
+</body>
+</html>

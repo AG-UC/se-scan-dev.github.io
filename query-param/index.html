@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>scan-e2e-tests query-param test page</title>
+
+  <!--
+    Dedicated target for the scan-e2e-tests `query-param-injection` regression
+    scenario, which exercises the scan-api `httpRequestInjections` feature
+    (SE-3076 / SE-2765 — "Scanner UTM and Geo query parameters"; QA: SE-3214).
+
+    The scanner appends caller-supplied query parameters to scanned URLs at
+    page-registration time. The suite submits a scan with http_request_injections
+    and asserts the injected parameters land in the recorded URL
+    (Pages.AllPages[].Url). The feature is page-agnostic, so this page is a
+    minimal, self-contained target on its OWN start_url (distinct from /default/
+    so injection runs don't share the 5-POST/5-min throttle window with the
+    default sanity scan).
+
+    As a bonus the page echoes location.search into the DOM, so an injected
+    parameter is also visible on the rendered page (a second fingerprint).
+
+    Source: https://github.com/AG-UC/se-scan-dev.github.io
+    Consumer: https://bitbucket.org/usercentricscode/scan-e2e-tests
+  -->
+
+  <!-- Usercentrics CMP V3 (sandbox) — present for realism; not asserted by this scenario. -->
+  <script id="usercentrics-cmp"
+          src="https://web.cmp.usercentrics-sandbox.eu/ui/loader.js"
+          data-sandbox="true"
+          data-settings-id="tPIg6i7JCCD-va"
+          async></script>
+</head>
+
+<body>
+  <h1>scan-e2e-tests query-param test page</h1>
+  <p>
+    Minimal target for the <code>httpRequestInjections</code> regression scenario.
+    The assertion is about the query parameters the scanner injects into the
+    request URL — not about page content. See
+    <a href="https://github.com/AG-UC/se-scan-dev.github.io">github.com/AG-UC/se-scan-dev.github.io</a>.
+  </p>
+
+  <h2>Query string seen by this page</h2>
+  <pre id="qs">(none)</pre>
+  <script>
+    // Reflect the raw query string so an injected parameter is observable both
+    // in the scanned URL and in the page DOM.
+    document.getElementById('qs').textContent = location.search || '(none)';
+  </script>
+</body>
+</html>

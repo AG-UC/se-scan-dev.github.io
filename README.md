@@ -14,9 +14,9 @@ self-contained page designed to exercise a specific aspect of scanner behaviour.
 | `/` | Landing page with nav | Minimal scripts; not a scan target. |
 | `default/` | 10 commonly-deployed services across Essential / Functional / Marketing | Baseline regression target. |
 | `missing-one/` | Same 10 services with LinkedIn Insight Tag intentionally absent | Threshold-tolerance target. The consuming scenario still expects all 10 services with a 90% threshold — so 9/10 passes and the missing service is surfaced in the detection report for manual verification. |
-
-Future variants will land in their own subdirectories — for example `/redirects/`,
-`/late-tracker/`, `/query-param/`.
+| `query-param/` | Minimal target that reflects `location.search` | Regression target for the scan-api `httpRequestInjections` feature (SE-3076). The suite injects query parameters and asserts they reach the scanned URL (`Pages.AllPages[].Url`). On its own start_url so injection runs don't share the throttle window with the default sanity scan. |
+| `late-tracker/` | Pinterest Tag (`s.pinimg.com`) injected ~5s after load | Regression target verifying the scanner's delayed-activity observation window (≈10s per page) still records a late-firing tracker. Distinct from the two-pass / prior-consent mechanism. |
+| `redirects/` (+ `redirects-target/`) | Client-side redirect to a page hosting Bing UET (`bat.bing.com`) | Regression target verifying the scanner follows a same-domain redirect and scans the destination. **Caveat:** client-side (meta-refresh + JS) redirect only — GitHub Pages cannot emit a real HTTP 301/302. |
 
 ## Default-services test page (`default/`)
 

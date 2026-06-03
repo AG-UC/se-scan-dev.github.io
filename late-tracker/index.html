@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>scan-e2e-tests late-tracker test page</title>
+
+  <!--
+    Target for the scan-e2e-tests `late-tracker` regression scenario.
+
+    Most services on /default/ fire on page load. This page instead injects a
+    distinctive tracker (Pinterest Tag, s.pinimg.com) ~5 seconds AFTER load.
+    It verifies, end to end, that the real scanner keeps observing network
+    activity past the initial paint (its per-page wait window,
+    maximumWaitTimeMilliseconds, is ~10s) and still records a late-firing
+    tracker. A tracker that loads only after a delay is the realistic case for
+    consent-gated tags that fire on interaction/timers.
+
+    NOTE: this is about the scanner's wait/observation window, NOT the "two-pass"
+    behaviour. Two-pass (prior-consent: visit once with consent, once without)
+    is a separate mechanism already unit-tested in organizer
+    (State4_PriorConsentScanTests). Don't conflate the two.
+
+    Source: https://github.com/AG-UC/se-scan-dev.github.io
+    Consumer: https://bitbucket.org/usercentricscode/scan-e2e-tests
+  -->
+
+  <!-- Usercentrics CMP V3 (sandbox) — present for realism; not asserted here. -->
+  <script id="usercentrics-cmp"
+          src="https://web.cmp.usercentrics-sandbox.eu/ui/loader.js"
+          data-sandbox="true"
+          data-settings-id="tPIg6i7JCCD-va"
+          async></script>
+</head>
+
+<body>
+  <h1>scan-e2e-tests late-tracker test page</h1>
+  <p>
+    Injects the Pinterest Tag (<code>s.pinimg.com</code>) ~5 seconds after load
+    to exercise the scanner's delayed-activity observation window. See
+    <a href="https://github.com/AG-UC/se-scan-dev.github.io">github.com/AG-UC/se-scan-dev.github.io</a>.
+  </p>
+  <p id="status">Late tracker not yet injected…</p>
+
+  <script>
+    // Delayed tracker injection. Fires well after initial page load but inside
+    // the scanner's per-page wait window. The script request to s.pinimg.com is
+    // observable by the scanner regardless of the response.
+    setTimeout(function () {
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://s.pinimg.com/ct/core.js';
+      document.head.appendChild(s);
+      var el = document.getElementById('status');
+      if (el) el.textContent = 'Late tracker (Pinterest Tag) injected after 5s.';
+    }, 5000);
+  </script>
+</body>
+</html>

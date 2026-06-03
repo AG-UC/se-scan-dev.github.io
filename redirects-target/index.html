@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>scan-e2e-tests redirects-target test page</title>
+
+  <!--
+    Redirect destination for the scan-e2e-tests `redirects` scenario. Reached
+    only by following the redirect from ../redirects/. Hosts a distinctive
+    tracker NOT present on /default/ — Microsoft Bing UET (bat.bing.com) — so
+    detecting it unambiguously proves the scanner followed the redirect and
+    scanned this page.
+
+    Source: https://github.com/AG-UC/se-scan-dev.github.io
+    Consumer: https://bitbucket.org/usercentricscode/scan-e2e-tests
+  -->
+
+  <!-- Usercentrics CMP V3 (sandbox) — present for realism. -->
+  <script id="usercentrics-cmp"
+          src="https://web.cmp.usercentrics-sandbox.eu/ui/loader.js"
+          data-sandbox="true"
+          data-settings-id="tPIg6i7JCCD-va"
+          async></script>
+
+  <!-- Microsoft Bing UET — distinctive redirect-destination fingerprint. -->
+  <script>
+    (function(w,d,t,r,u){var f,n,i;w[u]=w[u]||[],f=function(){var o={ti:"00000000",enableAutoSpaTracking:true};o.q=w[u],w[u]=new UET(o),w[u].push("pageLoad")},
+    n=d.createElement(t),n.src=r,n.async=1,n.onload=n.onreadystatechange=function(){var s=this.readyState;s&&s!=="loaded"&&s!=="complete"||(f(),n.onload=n.onreadystatechange=null)},
+    i=d.getElementsByTagName(t)[0],i.parentNode.insertBefore(n,i)})(window,document,"script","https://bat.bing.com/bat.js","uetq");
+  </script>
+</head>
+
+<body>
+  <h1>scan-e2e-tests redirects-target test page</h1>
+  <p>
+    Redirect destination. Hosts Microsoft Bing UET (<code>bat.bing.com</code>) as
+    a distinctive fingerprint. Reached via <a href="../redirects/">../redirects/</a>.
+    See <a href="https://github.com/AG-UC/se-scan-dev.github.io">github.com/AG-UC/se-scan-dev.github.io</a>.
+  </p>
+</body>
+</html>
