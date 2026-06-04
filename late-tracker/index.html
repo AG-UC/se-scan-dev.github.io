@@ -8,18 +8,31 @@
   <!--
     Target for the scan-e2e-tests `late-tracker` regression scenario.
 
-    Most services on /default/ fire on page load. This page instead injects a
-    distinctive tracker (Pinterest Tag, s.pinimg.com) ~5 seconds AFTER load.
-    It verifies, end to end, that the real scanner keeps observing network
-    activity past the initial paint (its per-page wait window,
-    maximumWaitTimeMilliseconds, is ~10s) and still records a late-firing
-    tracker. A tracker that loads only after a delay is the realistic case for
-    consent-gated tags that fire on interaction/timers.
+    WHAT THIS VERIFIES: a tracker injected AFTER initial paint, while the page is
+    still doing network work, is still captured by the scanner. The Pinterest Tag
+    (s.pinimg.com) is injected ~1.2s after load, during a deliberately-maintained
+    burst of background requests.
 
-    NOTE: this is about the scanner's wait/observation window, NOT the "two-pass"
-    behaviour. Two-pass (prior-consent: visit once with consent, once without)
-    is a separate mechanism already unit-tested in organizer
-    (State4_PriorConsentScanTests). Don't conflate the two.
+    WHY THE BURST (important — read before "simplifying" this page):
+    The scanner's per-page observation window is NOT a fixed dwell. It waits for
+    the `load` event and then for the network to be idle for ~50ms
+    (minimumWaitTimeMilliseconds); `maximumWaitTimeMilliseconds` (~10s) is only an
+    upper *cap* reached if the network never goes quiet. Evidence in scan-tracker:
+    network-inactivity.ts (resolves when activeRequests===0 for minWaitTime),
+    track.ts (minWaitTime default 50ms). So on an otherwise-quiet page a bare
+    `setTimeout(inject, 5000)` fires AFTER the window has already closed and is
+    missed — which is exactly why the previous version of this page was flaky
+    (passed one day, failed the next). See ROADMAP "Known gaps" + the linked
+    finding ticket.
+
+    This page keeps the network non-idle (a cache-busted request every ~60ms for
+    ~3s) so the observation window stays open well past the 1.2s injection point,
+    making the late injection deterministically observable. It therefore tests
+    the realistic "tag fires during ongoing page activity" case — NOT the claim
+    that the scanner dwells N seconds on a quiet page (it does not).
+
+    NOTE: still NOT the "two-pass" / prior-consent mechanism (unit-tested in
+    organizer). Different concern.
 
     Source: https://github.com/AG-UC/se-scan-dev.github.io
     Consumer: https://bitbucket.org/usercentricscode/scan-e2e-tests
@@ -36,24 +49,44 @@
 <body>
   <h1>scan-e2e-tests late-tracker test page</h1>
   <p>
-    Injects the Pinterest Tag (<code>s.pinimg.com</code>) ~5 seconds after load
-    to exercise the scanner's delayed-activity observation window. See
+    Injects the Pinterest Tag (<code>s.pinimg.com</code>) ~1.2s after load, while
+    a background request burst keeps the scanner's (network-idle-based)
+    observation window open. See
     <a href="https://github.com/AG-UC/se-scan-dev.github.io">github.com/AG-UC/se-scan-dev.github.io</a>.
   </p>
   <p id="status">Late tracker not yet injected…</p>
 
   <script>
-    // Delayed tracker injection. Fires well after initial page load but inside
-    // the scanner's per-page wait window. The script request to s.pinimg.com is
-    // observable by the scanner regardless of the response.
-    setTimeout(function () {
-      var s = document.createElement('script');
-      s.async = true;
-      s.src = 'https://s.pinimg.com/ct/core.js';
-      document.head.appendChild(s);
-      var el = document.getElementById('status');
-      if (el) el.textContent = 'Late tracker (Pinterest Tag) injected after 5s.';
-    }, 5000);
+    (function () {
+      var INJECT_AT_MS = 1200;   // when the late tracker fires
+      var BURST_UNTIL_MS = 3000; // keep the network busy until well past injection
+      var TICK_MS = 60;          // a new in-flight request every ~60ms so the
+                                 // scanner's ~50ms network-idle timer keeps
+                                 // re-arming and the window does not close early
+
+      // Keep the network non-idle: fire a cache-busted same-origin request on a
+      // short interval. 404s are fine — what matters is that a request is in
+      // flight, so the scanner's network-idle timer keeps re-arming and the
+      // observation window does not close before the late tracker is injected.
+      var start = Date.now();
+      var keepAlive = setInterval(function () {
+        var img = new Image();
+        img.src = './keepalive.gif?ts=' + Date.now() + '_' + Math.random();
+        if (Date.now() - start >= BURST_UNTIL_MS) clearInterval(keepAlive);
+      }, TICK_MS);
+
+      // The late tracker. Fires after initial paint but inside the (kept-open)
+      // observation window. The request to s.pinimg.com is observable regardless
+      // of its response.
+      setTimeout(function () {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://s.pinimg.com/ct/core.js';
+        document.head.appendChild(s);
+        var el = document.getElementById('status');
+        if (el) el.textContent = 'Late tracker (Pinterest Tag) injected ~1.2s after load.';
+      }, INJECT_AT_MS);
+    })();
   </script>
 </body>
 </html>
