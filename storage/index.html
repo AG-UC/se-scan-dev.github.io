@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>scan-e2e-tests storage test page</title>
+
+  <!--
+    Target for the scan-e2e-tests `storage` regression scenario (SE-3276).
+
+    WHAT THIS VERIFIES: the scanner records browser-storage writes — localStorage,
+    sessionStorage, and IndexedDB — in the result blob. The scanner captures these
+    as Trackers with Kind "StorageItem" (Key/Value/Type) and "IndexedDb"
+    (DatabaseName + Store.Operations). We write distinctive markers on load and the
+    scenario asserts each marker surfaces in the blob.
+
+    Determinism note: localStorage/sessionStorage are synchronous (written at load,
+    inside the observation window). IndexedDB is async; a short request burst keeps
+    the network non-idle (~1.5s) so the scanner's network-idle-based window stays
+    open until the IDB put completes (see ROADMAP "Known gaps": the window exits
+    ~50ms after network-idle, not a fixed dwell).
+
+    Source: https://github.com/AG-UC/se-scan-dev.github.io
+    Consumer: https://bitbucket.org/usercentricscode/scan-e2e-tests
+  -->
+
+  <!-- Usercentrics CMP V3 (sandbox) — present for realism; not asserted here. -->
+  <script id="usercentrics-cmp"
+          src="https://web.cmp.usercentrics-sandbox.eu/ui/loader.js"
+          data-sandbox="true"
+          data-settings-id="tPIg6i7JCCD-va"
+          async></script>
+</head>
+
+<body>
+  <h1>scan-e2e-tests storage test page</h1>
+  <p>
+    Writes distinctive localStorage / sessionStorage / IndexedDB entries on load to
+    exercise the scanner's storage capture. See
+    <a href="https://github.com/AG-UC/se-scan-dev.github.io">github.com/AG-UC/se-scan-dev.github.io</a>.
+  </p>
+  <p id="status">Storage not yet written…</p>
+
+  <script>
+    (function () {
+      // 1) Synchronous web storage — captured as StorageItem (Type localStorage/sessionStorage).
+      try { localStorage.setItem('uc_e2e_ls_marker', 'ls_val_e2e_77351'); } catch (e) {}
+      try { sessionStorage.setItem('uc_e2e_ss_marker', 'ss_val_e2e_77352'); } catch (e) {}
+
+      // 2) IndexedDB — captured as Kind "IndexedDb" (DatabaseName + put operation).
+      try {
+        var req = indexedDB.open('uc_e2e_idb_77353', 1);
+        req.onupgradeneeded = function () {
+          req.result.createObjectStore('e2e_store');
+        };
+        req.onsuccess = function () {
+          var db = req.result;
+          var tx = db.transaction('e2e_store', 'readwrite');
+          tx.objectStore('e2e_store').put('idb_val_77354', 'uc_e2e_idb_key');
+        };
+      } catch (e) {}
+
+      // 3) Keep the network non-idle for ~1.5s so the async IndexedDB write lands
+      //    inside the scanner's (network-idle-based) observation window.
+      var start = Date.now();
+      var keepAlive = setInterval(function () {
+        new Image().src = './keepalive.gif?ts=' + Date.now() + '_' + Math.random();
+        if (Date.now() - start >= 1500) clearInterval(keepAlive);
+      }, 60);
+
+      var el = document.getElementById('status');
+      if (el) el.textContent = 'Wrote localStorage + sessionStorage + IndexedDB markers.';
+    })();
+  </script>
+</body>
+</html>

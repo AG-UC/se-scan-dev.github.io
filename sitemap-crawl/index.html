@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>scan-e2e-tests sitemap-crawl start page</title>
+
+  <!--
+    Target for the scan-e2e-tests `sitemap-crawl` regression scenario (SE-3275).
+
+    WHAT THIS VERIFIES: when a sitemap is supplied, the scanner fetches + parses it
+    and crawls the enumerated URLs — even when they are NOT linked from the start
+    page. This start page deliberately contains NO links to page-a/b/c; the only
+    way the scanner can reach them is via sitemap.xml. The scenario asserts all
+    three child URLs appear in the scanned-pages set (Pages.AllPages[].Url).
+
+    The scan is submitted with enable_sitemap_parsing + sitemaps:[…/sitemap.xml]
+    and maximum_pages_to_scan high enough to fit start + 3 children.
+
+    Source: https://github.com/AG-UC/se-scan-dev.github.io
+    Consumer: https://bitbucket.org/usercentricscode/scan-e2e-tests
+  -->
+
+  <!-- Usercentrics CMP V3 (sandbox) — present for realism; not asserted here. -->
+  <script id="usercentrics-cmp"
+          src="https://web.cmp.usercentrics-sandbox.eu/ui/loader.js"
+          data-sandbox="true"
+          data-settings-id="tPIg6i7JCCD-va"
+          async></script>
+</head>
+
+<body>
+  <h1>scan-e2e-tests sitemap-crawl start page</h1>
+  <p>
+    Start page for the sitemap-discovery scenario. It links to nothing — page-a,
+    page-b and page-c are reachable only by parsing <code>sitemap.xml</code>, which
+    the scan supplies via the <code>sitemaps</code> config (not via any link on
+    this page). See
+    <a href="https://github.com/AG-UC/se-scan-dev.github.io">github.com/AG-UC/se-scan-dev.github.io</a>.
+  </p>
+</body>
+</html>

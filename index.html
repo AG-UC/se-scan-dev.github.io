@@ -59,6 +59,16 @@
         <td>Google Analytics (<code>gtag/js?id=G-E2EVIAGTM1</code>) injected <em>via</em> Google Tag Manager (<code>gtm.js?id=GTM-E2EVIAGT</code>), not as a direct tag</td>
         <td>Regression target for the "GA implemented via GTM" pattern: asserts the GTM-injected GA request is still observed. Service <em>attribution</em> (GA vs GTM) is post-processing (scan-result-api / template_id) and out of scope until that oracle lands.</td>
       </tr>
+      <tr>
+        <td><a href="storage/">storage/</a></td>
+        <td>Writes distinctive <code>localStorage</code>, <code>sessionStorage</code> and <code>IndexedDB</code> markers on load</td>
+        <td>Regression target (SE-3276): asserts the scanner records browser-storage writes in the result blob (captured as <code>StorageItem</code> / <code>IndexedDb</code> trackers).</td>
+      </tr>
+      <tr>
+        <td><a href="sitemap-crawl/">sitemap-crawl/</a></td>
+        <td>Start page links to nothing; <code>page-a/b/c</code> are reachable only via <code>sitemap.xml</code></td>
+        <td>Regression target (SE-3275): asserts the scanner fetches + parses a supplied sitemap and crawls the enumerated URLs (sitemap-driven discovery, not link-following).</td>
+      </tr>
     </tbody>
   </table>
 

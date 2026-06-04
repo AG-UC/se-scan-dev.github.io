@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- scan-e2e-tests sitemap-crawl scenario (SE-3275). Lists 3 child pages that are
+     NOT linked from the start page, so the scanner can only reach them by parsing
+     this sitemap. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://ag-uc.github.io/se-scan-dev.github.io/sitemap-crawl/page-a/</loc></url>
+  <url><loc>https://ag-uc.github.io/se-scan-dev.github.io/sitemap-crawl/page-b/</loc></url>
+  <url><loc>https://ag-uc.github.io/se-scan-dev.github.io/sitemap-crawl/page-c/</loc></url>
+</urlset>
