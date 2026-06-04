@@ -54,6 +54,11 @@
         <td>Client-side redirect to <code>redirects-target/</code> (Bing UET, <code>bat.bing.com</code>)</td>
         <td>Regression target verifying the scanner follows a same-domain redirect and scans the destination. Client-side redirect only — GitHub Pages cannot emit a real HTTP 301/302.</td>
       </tr>
+      <tr>
+        <td><a href="gtm-ga/">gtm-ga/</a></td>
+        <td>Google Analytics (<code>gtag/js?id=G-E2EVIAGTM1</code>) injected <em>via</em> Google Tag Manager (<code>gtm.js?id=GTM-E2EVIAGT</code>), not as a direct tag</td>
+        <td>Regression target for the "GA implemented via GTM" pattern: asserts the GTM-injected GA request is still observed. Service <em>attribution</em> (GA vs GTM) is post-processing (scan-result-api / template_id) and out of scope until that oracle lands.</td>
+      </tr>
     </tbody>
   </table>
 

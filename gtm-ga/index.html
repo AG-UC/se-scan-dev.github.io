@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>scan-e2e-tests gtm-ga test page</title>
+
+  <!--
+    Target for the scan-e2e-tests `gtm-ga` regression scenario.
+
+    Real-world pattern: a site loads Google Tag Manager, and Google Analytics is
+    configured *inside the GTM container* rather than as a direct gtag snippet.
+    The historically-reported bug: the scanner sees Google Tag Manager but the
+    GA that GTM injects goes unattributed ("detects GTM, not GA").
+
+    What this page reproduces: GTM loads (gtm.js?id=GTM-…), and GA is then
+    injected *by GTM-style runtime injection* — NOT by a static <script> tag in
+    this HTML. So GA is invisible in page source and only appears because the
+    container logic injected it, exactly like a production GTM→GA4 deployment.
+
+    CAVEAT (static host): GitHub Pages cannot host a server-configured GTM
+    container that actually fires a GA4 tag, so the block below STANDS IN for
+    that container — it performs the same runtime injection GTM would
+    (loads gtag/js?id=G-… and configures it). The network fingerprint the
+    scanner observes is identical to a real GTM→GA chain:
+      - GTM:  https://www.googletagmanager.com/gtm.js?id=GTM-E2EVIAGT
+      - GA :  https://www.googletagmanager.com/gtag/js?id=G-E2EVIAGTM1  (+ _ga cookie)
+
+    HONEST SCOPE — what the e2e test built on this page can and cannot prove:
+      - CAN prove (today's substring-on-raw-blob oracle): the GTM-injected GA
+        request (gtag/js?id=G-…) is still OBSERVED by the scanner. Guards the
+        regression "GTM-injected GA stops firing / stops being captured".
+      - CANNOT prove: that the scanner ATTRIBUTES the request to "Google
+        Analytics" vs folding it under "Google Tag Manager". The raw scan-result
+        blob carries no service-name attribution (verified: Provider = cookie
+        domain, no "Google Analytics"/"Category" fields). That attribution is
+        post-processing in scan-result-api (template_id mapping) — scan-e2e-tests
+        ROADMAP item 7. This scenario is the prime candidate to gain a
+        template_id assertion once item 7 lands; that is what actually closes the
+        "detects GTM not GA" bug class.
+
+    Source: https://github.com/AG-UC/se-scan-dev.github.io
+    Consumer: https://bitbucket.org/usercentricscode/scan-e2e-tests
+  -->
+
+  <!-- Usercentrics CMP V3 (sandbox) — present for realism; not asserted here. -->
+  <script id="usercentrics-cmp"
+          src="https://web.cmp.usercentrics-sandbox.eu/ui/loader.js"
+          data-sandbox="true"
+          data-settings-id="tPIg6i7JCCD-va"
+          async></script>
+
+  <!-- Google Tag Manager (standard container snippet). This is the ONLY tag
+       declared in the page source. GA is NOT declared here — it is injected by
+       the container shim below, mirroring a real GTM→GA4 deployment. -->
+  <script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-E2EVIAGT');
+  </script>
+</head>
+
+<body>
+  <h1>scan-e2e-tests gtm-ga test page</h1>
+  <p>
+    Google Tag Manager loads (<code>gtm.js?id=GTM-E2EVIAGT</code>) and then
+    injects Google Analytics (<code>gtag/js?id=G-E2EVIAGTM1</code>) the way a
+    GTM container would — GA is not a static tag in this page. See
+    <a href="https://github.com/AG-UC/se-scan-dev.github.io">github.com/AG-UC/se-scan-dev.github.io</a>.
+  </p>
+  <p id="status">GA (via GTM) not yet injected…</p>
+
+  <!-- GTM container stand-in: performs the runtime injection a server-configured
+       GTM "GA4 Configuration" tag would. Kept tiny and explicit so the GA signal
+       provably originates from GTM-style injection, not a direct page tag. -->
+  <script>
+    (function () {
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      var GA_MEASUREMENT_ID = 'G-E2EVIAGTM1';
+
+      // 1) Load the GA4 library the same way GTM's tag template does.
+      var ga = document.createElement('script');
+      ga.async = true;
+      ga.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_MEASUREMENT_ID;
+      document.head.appendChild(ga);
+
+      // 2) Configure GA4 — sets the _ga / _ga_<id> cookies and would emit the
+      //    collect beacon. (The scanner reliably observes the gtag/js request and
+      //    the measurement-id cookie; the collect beacon is not relied upon.)
+      gtag('js', new Date());
+      gtag('config', GA_MEASUREMENT_ID);
+
+      var el = document.getElementById('status');
+      if (el) el.textContent = 'GA (G-E2EVIAGTM1) injected via GTM-style runtime injection.';
+    })();
+  </script>
+
+  <!-- GTM noscript fallback (standard) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-E2EVIAGT"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+</body>
+</html>
