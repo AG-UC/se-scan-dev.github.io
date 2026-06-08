@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scan-result-smoke · se-scan-dev</title>
+  <!--
+    Dedicated SMOKE page for the scan-e2e-tests integration tier
+    (scan-api → scan-result-api cross-layer e2e, SE-3224).
+
+    Why a separate page: the cross-layer test runs a real scan + must NOT share
+    scan-api's 5-POST-per-5-min-per-startUrl throttle window with the sanity
+    /default/ scan. Its own URL = its own throttle bucket (no 429 when both run).
+
+    Services here are chosen because they reliably resolve to a UC DPS template_id
+    (verified live): Google Analytics (gtag → _ga), Hotjar (_hjSession*),
+    YouTube (TESTCOOKIESENABLED), Vimeo (_dd_s / player). Loaded as plain tags so
+    they fire on load (no consent gating).
+  -->
+
+  <!-- Google Analytics 4 (gtag.js) → DPS template_id for GA -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-SMOKE000RA"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-SMOKE000RA');
+  </script>
+
+  <!-- Hotjar → _hjSession* trackers -->
+  <script>
+    (function (h, o, t, j, a, r) {
+      h.hj = h.hj || function () { (h.hj.q = h.hj.q || []).push(arguments); };
+      h._hjSettings = { hjid: 3500000, hjsv: 6 };
+      a = o.getElementsByTagName('head')[0];
+      r = o.createElement('script'); r.async = 1;
+      r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
+      a.appendChild(r);
+    })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
+  </script>
+</head>
+<body>
+  <h1>scan-result-smoke</h1>
+  <p>
+    Controlled test page for the <code>scan-e2e-tests</code> integration tier. Hosts a small,
+    stable set of services that resolve to DPS <code>template_id</code>s, so a scan of this page
+    drives the full scan-api → scan-result-api mapping. See the repo's
+    <code>tests/integration/</code>.
+  </p>
+
+  <!-- YouTube embed → TESTCOOKIESENABLED (YouTube template) -->
+  <iframe width="320" height="180"
+    src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+    title="YouTube" frameborder="0" allowfullscreen></iframe>
+
+  <!-- Vimeo embed → player/datadog trackers (Vimeo template) -->
+  <iframe src="https://player.vimeo.com/video/76979871" width="320" height="180"
+    frameborder="0" allow="autoplay; fullscreen; picture-in-picture"></iframe>
+</body>
+</html>
