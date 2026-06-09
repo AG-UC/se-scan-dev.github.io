@@ -69,6 +69,11 @@
         <td>Start page links to nothing; <code>page-a/b/c</code> are reachable only via <code>sitemap.xml</code></td>
         <td>Regression target (SE-3275): asserts the scanner fetches + parses a supplied sitemap and crawls the enumerated URLs (sitemap-driven discovery, not link-following).</td>
       </tr>
+      <tr>
+        <td><a href="scan-result-smoke/">scan-result-smoke/</a></td>
+        <td>Same 10 services as <code>default/</code></td>
+        <td>Integration-tier target (SE-3224): scanned, then bridged into scan-result-api so the cross-layer e2e asserts each service maps 1-1 to a DPS <code>template_id</code>. Own URL = own throttle bucket.</td>
+      </tr>
     </tbody>
   </table>
 
