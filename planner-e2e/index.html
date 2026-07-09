@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--
+    planner-e2e — DEDICATED scan-planner-triggered e2e page (scan-e2e integration tier, SE-3243).
+
+    This page is the fixture domain of the permanent dev scan configuration that the
+    scan-planner-trigger spec fires via POST /scheduling/scan-now-by-domain-id. It exists as its
+    OWN URL so the planner-initiated scan never shares another page's 5-POST-per-5-min scan-api
+    throttle bucket.
+
+    Deliberately LEANER than /scan-result-smoke/ (4 services, not 10): this spec proves the
+    production trigger path (scan-planner -> scan-api -> Scanner Core -> webhook -> Pub/Sub ->
+    scan-result-api DPS mapping), not the per-service mapping breadth — /scan-result-smoke/
+    owns that. GA + GTM are both present so the masking regression stays covered on this path too.
+  -->
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>scan-e2e planner-e2e page</title>
+
+  <!-- 1. Usercentrics CMP V3 (Essential) — sandbox loader + settingsId -->
+  <script id="usercentrics-cmp"
+          src="https://web.cmp.usercentrics-sandbox.eu/ui/loader.js"
+          data-sandbox="true"
+          data-settings-id="tPIg6i7JCCD-va"
+          async></script>
+
+  <!-- 2. Google Analytics (GA4 / Marketing) — direct gtag.js, no consent gating -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-T8M5HE7K9P"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-T8M5HE7K9P');
+  </script>
+
+  <!-- 3. Google Tag Manager (Marketing) — direct gtm.js, no consent gating -->
+  <script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-KWX2R8K9');
+  </script>
+</head>
+
+<body>
+  <h1>scan-e2e planner-e2e page</h1>
+  <p>
+    Static fixture page for the scan-planner-triggered e2e test (SE-3243). Scanned only when
+    the suite fires <code>POST /scheduling/scan-now-by-domain-id</code> on scan-planner dev —
+    its scan configuration is <code>manual</code> (F0P0), so it is never auto-scheduled.
+    Source: <a href="https://github.com/AG-UC/se-scan-dev.github.io">github.com/AG-UC/se-scan-dev.github.io</a>.
+  </p>
+
+  <h2>Services declared</h2>
+  <ul>
+    <li>Usercentrics CMP V3 (sandbox, settingsId <code>tPIg6i7JCCD-va</code>)</li>
+    <li>Google Analytics (GA4) — head</li>
+    <li>Google Tag Manager — head</li>
+    <li>YouTube — iframe below</li>
+  </ul>
+
+  <!-- 4. YouTube (Functional) — iframe-based detection path -->
+  <h3>YouTube</h3>
+  <iframe src="https://www.youtube.com/embed/DWcJFNfaw9c"
+          width="426" height="240" frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+
+  <noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KWX2R8K9"
+            height="0" width="0" style="display:none;visibility:hidden"></iframe>
+  </noscript>
+</body>
+</html>
