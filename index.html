@@ -74,6 +74,11 @@
         <td>Same 10 services as <code>default/</code></td>
         <td>Integration-tier target (SE-3224): scanned, then bridged into scan-result-api so the cross-layer e2e asserts each service maps 1-1 to a DPS <code>template_id</code>. Own URL = own throttle bucket.</td>
       </tr>
+      <tr>
+        <td><a href="scan-planner-smoke/">scan-planner-smoke/</a></td>
+        <td>Same 10 services as <code>default/</code></td>
+        <td>Integration-tier target (SE-3243): fixture domain of the permanent dev scan configuration the planner-triggered e2e fires via scan-planner's <code>scan-now-by-domain-id</code>, exercising the real production pipeline end-to-end and asserting the same 1-1 DPS <code>template_id</code> mapping. Own URL = own throttle bucket.</td>
+      </tr>
     </tbody>
   </table>
 

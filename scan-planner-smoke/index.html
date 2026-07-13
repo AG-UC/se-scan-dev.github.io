@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--
+    scan-planner-smoke — DEDICATED scan-planner-triggered e2e page (scan-e2e integration tier, SE-3243).
+
+    This page is the fixture domain of the permanent dev scan configuration that the
+    scan-planner-smoke spec fires via POST /scheduling/scan-now-by-domain-id, exercising the REAL
+    production pipeline (scan-planner -> scan-api -> Scanner Core -> webhook -> Pub/Sub ->
+    scan-result-api DPS mapping). It exists as its OWN URL so the planner-initiated scan never
+    shares another page's 5-POST-per-5-min scan-api throttle bucket.
+
+    Identical service set to /scan-result-smoke/ (the same 10 commonly-deployed services as
+    /default/): the spec asserts each maps 1-1 to a DPS template_id — including BOTH Google
+    Analytics AND Google Tag Manager, so a regression where GTM masks GA is caught on the
+    production path too.
+-->
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>scan-e2e-tests scan-planner-smoke page</title>
+
+  <!--
+    Static test page used by the scan-e2e-tests regression suite to assert the
+    V3+ Scanner detects 10 commonly-deployed services across Usercentrics'
+    default categories (Essential / Functional / Marketing). Services load
+    via plain script / iframe / link tags so they fire on page load and are
+    observable by the scanner.
+    Source: https://github.com/AG-UC/se-scan-dev.github.io
+    Consumer (scan-e2e-tests suite): https://bitbucket.org/usercentricscode/scan-e2e-tests
+  -->
+
+  <!-- 1. Usercentrics CMP V3 (Essential) — sandbox loader + settingsId -->
+  <script id="usercentrics-cmp"
+          src="https://web.cmp.usercentrics-sandbox.eu/ui/loader.js"
+          data-sandbox="true"
+          data-settings-id="tPIg6i7JCCD-va"
+          async></script>
+
+  <!-- 2. Google reCAPTCHA (Essential) -->
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+  <!-- 6. Google Analytics (GA4 / Marketing) — direct gtag.js, no consent gating in HTML -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-T8M5HE7K9P"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-T8M5HE7K9P');
+  </script>
+
+  <!-- 7. Google Tag Manager (Marketing) — direct gtm.js, no consent gating -->
+  <script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-KWX2R8K9');
+  </script>
+
+  <!-- 8. Hotjar (Marketing) — direct loader, no consent gating -->
+  <script>
+    (function(h,o,t,j,a,r){
+      h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+      h._hjSettings={hjid:3000000,hjsv:6};
+      a=o.getElementsByTagName('head')[0];
+      r=o.createElement('script');r.async=1;
+      r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+      a.appendChild(r);
+    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+  </script>
+
+  <!-- 9. Facebook / Meta Pixel (Marketing) — direct fbevents.js -->
+  <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '0000000000000000');
+    fbq('track', 'PageView');
+  </script>
+
+  <!-- 10. LinkedIn Insight Tag (Marketing) — direct insight.min.js -->
+  <script type="text/javascript">
+    _linkedin_partner_id = "0000000";
+    window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+    window._linkedin_data_partner_ids.push(_linkedin_partner_id);
+  </script>
+  <script type="text/javascript">
+    (function(l){
+      if(!l){window.lintrk=function(a,b){window.lintrk.q.push([a,b])};
+      window.lintrk.q=[]}
+      var s=document.getElementsByTagName("script")[0];
+      var b=document.createElement("script");
+      b.type="text/javascript";b.async=true;
+      b.src="https://snap.licdn.com/li.lms-analytics/insight.min.js";
+      s.parentNode.insertBefore(b,s);
+    })(window.lintrk);
+  </script>
+</head>
+
+<body>
+  <h1>scan-e2e scan-planner-smoke page</h1>
+  <p>
+    Static test page exercised by the V3+ Scanner regression suite. Declares 10
+    commonly-deployed services across Usercentrics' default categories
+    (Essential / Functional / Marketing).
+    Source: <a href="https://github.com/AG-UC/se-scan-dev.github.io">github.com/AG-UC/se-scan-dev.github.io</a>.
+    Consumer: <a href="https://bitbucket.org/usercentricscode/scan-e2e-tests">bitbucket.org/usercentricscode/scan-e2e-tests</a>.
+  </p>
+
+  <h2>Essential</h2>
+  <ul>
+    <li>Usercentrics CMP V3 (sandbox, settingsId <code>tPIg6i7JCCD-va</code>)</li>
+    <li>Google reCAPTCHA (script loaded above; image below)
+      <br><img src="https://developers.google.com/static/recaptcha/images/newCaptchaAnchor.gif"
+               id="reCaptchaV3" alt="reCAPTCHA" width="280">
+    </li>
+  </ul>
+
+  <h2>Functional</h2>
+
+  <!-- 3. YouTube (Functional) -->
+  <h3>YouTube</h3>
+  <iframe src="https://www.youtube.com/embed/DWcJFNfaw9c"
+          width="426" height="240" frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+
+  <!-- 4. Vimeo (Functional) -->
+  <h3>Vimeo</h3>
+  <iframe src="https://player.vimeo.com/video/744979938"
+          width="426" height="240" frameborder="0"
+          allow="autoplay; fullscreen; picture-in-picture"
+          allowfullscreen></iframe>
+
+  <!-- 5. Google Maps (Functional) -->
+  <h3>Google Maps</h3>
+  <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d42550.78176913606!2d11.6391936!3d48.198451199999994!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sde!4v1627274483897!5m2!1sen!2sde"
+          width="426" height="240" frameborder="0" allowfullscreen></iframe>
+
+  <h2>Marketing</h2>
+  <p>Loaded in the document head: Google Analytics (GA4), Google Tag Manager, Hotjar, Facebook / Meta Pixel, LinkedIn Insight Tag.</p>
+  <noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KWX2R8K9"
+            height="0" width="0" style="display:none;visibility:hidden"></iframe>
+  </noscript>
+
+</body>
+</html>
