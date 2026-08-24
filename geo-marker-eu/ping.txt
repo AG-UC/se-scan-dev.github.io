@@ -1,0 +1,1 @@
+geo-echo marker target (EU/non-US). See /scan-location-us/index.html.

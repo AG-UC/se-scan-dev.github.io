@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>scan-e2e scan-location-eu geo-echo page</title>
+
+  <!--
+    Target for the scan-e2e `scan-location-eu-control` regression scenario
+    (SE-3864, epic SE-1474) — the EU/DEFAULT CONTROL twin of
+    /scan-location-us/. Read that page's header for the full geo-echo design;
+    the script below is byte-identical on purpose (the marker reflects the
+    OBSERVED country, so one script serves both pages).
+
+    This page is scanned with `configurations.scanQueue` OMITTED. The claim it
+    exists to prove: the US go-live did NOT change routing for default scans —
+    the scanner still arrives from the EU egress (documented EU IPs, non-US
+    geo, geo-marker-eu in the blob).
+
+    Source: https://github.com/AG-UC/se-scan-dev.github.io
+    Consumer: https://bitbucket.org/usercentricscode/scan-e2e-tests
+  -->
+</head>
+
+<body>
+  <h1>scan-e2e scan-location-eu geo-echo page</h1>
+  <p>
+    Scanned with <code>configurations.scanQueue</code> omitted (the default):
+    the scanner must arrive here from the EU egress, untouched by the US
+    rollout. This page echoes the caller's IP + resolved country into a marker
+    request and a cookie.
+  </p>
+  <p id="status">Resolving caller IP…</p>
+
+  <script>
+    (async function () {
+      // Two independent CORS-open resolvers; either alone is a single point
+      // of failure for the whole e2e story, hence the fallback chain.
+      const providers = [
+        async () => {
+          const r = await fetch('https://ipwho.is/');
+          const j = await r.json();
+          return { ip: j.ip, country: j.country_code };
+        },
+        async () => {
+          const r = await fetch('https://ipapi.co/json/');
+          const j = await r.json();
+          return { ip: j.ip, country: j.country_code };
+        },
+      ];
+      let echo = null;
+      for (const probe of providers) {
+        try {
+          const candidate = await probe();
+          if (candidate && candidate.ip && candidate.country) { echo = candidate; break; }
+        } catch (_) { /* try next provider */ }
+      }
+      const el = document.getElementById('status');
+      if (!echo) {
+        // No marker request at all → the scenario's required service misses
+        // its threshold → the e2e test FAILS (loudly, not silently green).
+        if (el) el.textContent = 'geo-echo FAILED: no resolver reachable.';
+        return;
+      }
+      const value = encodeURIComponent(echo.ip + '|' + echo.country); // | → %7C
+      document.cookie = 'uc_geo_echo=' + value + '; path=/; max-age=3600';
+      // Marker reflects the OBSERVED country — geo-marker-us only if the
+      // caller actually resolves to the US.
+      const marker = echo.country === 'US' ? 'geo-marker-us' : 'geo-marker-eu';
+      fetch('../' + marker + '/ping.txt?uc_geo_echo=' + value).catch(function () {});
+      if (el) el.textContent = 'geo-echo: ' + echo.ip + ' (' + echo.country + ') → ' + marker;
+    })();
+  </script>
+</body>
+</html>

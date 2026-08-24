@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>scan-e2e scan-location-us geo-echo page</title>
+
+  <!--
+    Target for the scan-e2e `scan-location-us` regression scenario
+    (SE-3864, epic SE-1474 — US scanner location go-live).
+
+    PURPOSE (per dev guidance on SE-3864, Martin/Brian): a micro site that
+    records WHO visited it — the caller's IP and the geo that IP resolves to —
+    so the e2e test can assert the scan EGRESSED FROM ONE OF THE DOCUMENTED
+    IPs (the customer-facing whitelist contract, SE-3847). IP-in-documented-
+    list is the PRIMARY assertion; the resolved region is secondary
+    corroboration.
+
+    HOW (static-host constraint): GitHub Pages can't read the request IP
+    server-side, so the page's own JavaScript — executed by the scanner's
+    browser, therefore observing the scanner's OWN egress — asks a public
+    geo-IP resolver (ipwho.is, fallback ipapi.co) and echoes the answer into
+    two places the scan-result blob records:
+      1. a request URL:  ../geo-marker-us/ping.txt?uc_geo_echo=<ip>%7C<CC>
+         (or ../geo-marker-eu/… when the resolved country is NOT US — the
+         marker reflects the OBSERVED geo, not which page was loaded, so the
+         existing substring oracle doubles as a geo assertion);
+      2. a cookie:       uc_geo_echo=<ip>%7C<CC>
+    scan-e2e's extractGeoEcho() (src/result/geo-echo.ts) parses either form.
+
+    Twin page: /scan-location-eu/ (identical script; scenario expectations
+    differ — it is the control proving default routing stays EU).
+
+    Source: https://github.com/AG-UC/se-scan-dev.github.io
+    Consumer: https://bitbucket.org/usercentricscode/scan-e2e-tests
+  -->
+</head>
+
+<body>
+  <h1>scan-e2e scan-location-us geo-echo page</h1>
+  <p>
+    Scanned with <code>configurations.scanQueue = USCalifornia</code>: the
+    scanner must arrive here from a documented US egress IP. This page echoes
+    the caller's IP + resolved country into a marker request and a cookie.
+  </p>
+  <p id="status">Resolving caller IP…</p>
+
+  <script>
+    (async function () {
+      // Two independent CORS-open resolvers; either alone is a single point
+      // of failure for the whole e2e story, hence the fallback chain.
+      const providers = [
+        async () => {
+          const r = await fetch('https://ipwho.is/');
+          const j = await r.json();
+          return { ip: j.ip, country: j.country_code };
+        },
+        async () => {
+          const r = await fetch('https://ipapi.co/json/');
+          const j = await r.json();
+          return { ip: j.ip, country: j.country_code };
+        },
+      ];
+      let echo = null;
+      for (const probe of providers) {
+        try {
+          const candidate = await probe();
+          if (candidate && candidate.ip && candidate.country) { echo = candidate; break; }
+        } catch (_) { /* try next provider */ }
+      }
+      const el = document.getElementById('status');
+      if (!echo) {
+        // No marker request at all → the scenario's required service misses
+        // its threshold → the e2e test FAILS (loudly, not silently green).
+        if (el) el.textContent = 'geo-echo FAILED: no resolver reachable.';
+        return;
+      }
+      const value = encodeURIComponent(echo.ip + '|' + echo.country); // | → %7C
+      document.cookie = 'uc_geo_echo=' + value + '; path=/; max-age=3600';
+      // Marker reflects the OBSERVED country — geo-marker-us only if the
+      // caller actually resolves to the US.
+      const marker = echo.country === 'US' ? 'geo-marker-us' : 'geo-marker-eu';
+      fetch('../' + marker + '/ping.txt?uc_geo_echo=' + value).catch(function () {});
+      if (el) el.textContent = 'geo-echo: ' + echo.ip + ' (' + echo.country + ') → ' + marker;
+    })();
+  </script>
+</body>
+</html>
