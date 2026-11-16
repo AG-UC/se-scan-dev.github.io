@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>scan-e2e Protect+ daily report test page</title>
+
+  <!--
+    Target for the Protect+ daily report e2e (scan-e2e-cb, SE-3860).
+
+    WHAT THIS VERIFIES: a Cookiebot domain on the Protect+ plan that points here is
+    scanned daily; after the daily scan scan-adapter mails the receivers the trackers
+    that are new since the day before. The e2e reads that mail and checks it against
+    this page.
+
+    The page sets a fixed set of cookies (the baseline, same shape as Pelle's
+    pellebrandes-uc.github.io tracker-diff page) plus ONE cookie whose name carries
+    the UTC date of the scan. Every day's scan therefore finds exactly one tracker
+    that was not on the list the day before, so the day's mail must say
+    "1 new tracker" and name se_e2e_daily_<yyyymmdd> - without anyone editing the page
+    between scans. Edit the fixed lines to test a bigger delta by hand.
+
+    Source: https://github.com/AG-UC/se-scan-dev.github.io
+    Consumer: https://bitbucket.org/usercentricscode/scan-e2e (tests/cookiebot/, planned)
+  -->
+</head>
+
+<body>
+  <h1>scan-e2e Protect+ daily report test page</h1>
+  <p>
+    Sets a fixed set of first-party cookies plus one cookie named after today's UTC date,
+    so every daily scan finds exactly one new tracker. See
+    <a href="https://github.com/AG-UC/se-scan-dev.github.io">github.com/AG-UC/se-scan-dev.github.io</a>.
+  </p>
+  <p id="status">Cookies not yet written…</p>
+
+  <script>
+    (function () {
+      // Fixed baseline: on the domain's tracker list after the first full scan, never "new" again.
+      document.cookie = "se_e2e_baseline_a=1; max-age=31536000; path=/";
+      document.cookie = "se_e2e_baseline_b=1; max-age=31536000; path=/";
+      document.cookie = "_ga=GA1.1.123456789.1793088000; max-age=31536000; path=/";
+
+      // The day's tracker: a new name every UTC day, so each daily report lists exactly this one as new.
+      var now = new Date();
+      var day = now.getUTCFullYear()
+        + String(now.getUTCMonth() + 1).padStart(2, "0")
+        + String(now.getUTCDate()).padStart(2, "0");
+      var daily = "se_e2e_daily_" + day;
+      document.cookie = daily + "=1; max-age=172800; path=/";
+
+      document.getElementById("status").textContent = "Cookies written; today's tracker is " + daily + ".";
+    })();
+  </script>
+</body>
+</html>
