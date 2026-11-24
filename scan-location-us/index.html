@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>scan-location-us</title>
+</head>
+
+<body>
+  <h1>scan-location-us</h1>
+  <p id="status"></p>
+
+  <script>
+    (async function () {
+      const providers = [
+        async () => {
+          const r = await fetch('https://ipwho.is/');
+          const j = await r.json();
+          return { ip: j.ip, country: j.country_code };
+        },
+        async () => {
+          const r = await fetch('https://ipapi.co/json/');
+          const j = await r.json();
+          return { ip: j.ip, country: j.country_code };
+        },
+      ];
+      let echo = null;
+      for (const probe of providers) {
+        try {
+          const candidate = await probe();
+          if (candidate && candidate.ip && candidate.country) { echo = candidate; break; }
+        } catch (_) { }
+      }
+      const el = document.getElementById('status');
+      if (!echo) {
+        if (el) el.textContent = 'no resolver reachable';
+        return;
+      }
+      const value = encodeURIComponent(echo.ip + '|' + echo.country);
+      document.cookie = 'uc_geo_echo=' + value + '; path=/; max-age=3600';
+      const marker = echo.country === 'US' ? 'geo-marker-us' : 'geo-marker-eu';
+      fetch('../' + marker + '/ping.txt?uc_geo_echo=' + value).catch(function () {});
+      if (el) el.textContent = echo.ip + ' ' + echo.country + ' ' + marker;
+    })();
+  </script>
+</body>
+</html>

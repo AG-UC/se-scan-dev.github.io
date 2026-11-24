@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>protect-plus-daily</title>
+</head>
+
+<body>
+  <h1>protect-plus-daily</h1>
+  <p id="status"></p>
+
+  <script>
+    (function () {
+      document.cookie = "se_e2e_baseline_a=1; max-age=31536000; path=/";
+      document.cookie = "se_e2e_baseline_b=1; max-age=31536000; path=/";
+      document.cookie = "_ga=GA1.1.123456789.1793088000; max-age=31536000; path=/";
+      var now = new Date();
+      var day = now.getUTCFullYear()
+        + String(now.getUTCMonth() + 1).padStart(2, "0")
+        + String(now.getUTCDate()).padStart(2, "0");
+      var daily = "se_e2e_daily_" + day;
+      document.cookie = daily + "=1; max-age=172800; path=/";
+      var el = document.getElementById("status");
+      if (el) el.textContent = daily;
+    })();
+  </script>
+</body>
+</html>

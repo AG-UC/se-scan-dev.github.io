@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>storage</title>
+  <script id="usercentrics-cmp"
+          src="https://web.cmp.usercentrics-sandbox.eu/ui/loader.js"
+          data-sandbox="true"
+          data-settings-id="tPIg6i7JCCD-va"
+          async></script>
+</head>
+
+<body>
+  <h1>storage</h1>
+  <p id="status"></p>
+
+  <script>
+    (function () {
+      try { localStorage.setItem('uc_e2e_ls_marker', 'ls_val_e2e_77351'); } catch (e) {}
+      try { sessionStorage.setItem('uc_e2e_ss_marker', 'ss_val_e2e_77352'); } catch (e) {}
+      try {
+        var req = indexedDB.open('uc_e2e_idb_77353', 1);
+        req.onupgradeneeded = function () {
+          req.result.createObjectStore('e2e_store');
+        };
+        req.onsuccess = function () {
+          var db = req.result;
+          var tx = db.transaction('e2e_store', 'readwrite');
+          tx.objectStore('e2e_store').put('idb_val_77354', 'uc_e2e_idb_key');
+        };
+      } catch (e) {}
+      var start = Date.now();
+      var keepAlive = setInterval(function () {
+        new Image().src = './keepalive.gif?ts=' + Date.now() + '_' + Math.random();
+        if (Date.now() - start >= 1500) clearInterval(keepAlive);
+      }, 60);
+      var el = document.getElementById('status');
+      if (el) el.textContent = 'written';
+    })();
+  </script>
+</body>
+</html>

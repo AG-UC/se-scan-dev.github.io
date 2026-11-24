@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>late-tracker</title>
+  <script id="usercentrics-cmp"
+          src="https://web.cmp.usercentrics-sandbox.eu/ui/loader.js"
+          data-sandbox="true"
+          data-settings-id="tPIg6i7JCCD-va"
+          async></script>
+</head>
+
+<body>
+  <h1>late-tracker</h1>
+  <p id="status"></p>
+
+  <script>
+    (function () {
+      var INJECT_AT_MS = 1200;
+      var BURST_UNTIL_MS = 3000;
+      var TICK_MS = 60;
+      var start = Date.now();
+      var keepAlive = setInterval(function () {
+        var img = new Image();
+        img.src = './keepalive.gif?ts=' + Date.now() + '_' + Math.random();
+        if (Date.now() - start >= BURST_UNTIL_MS) clearInterval(keepAlive);
+      }, TICK_MS);
+      setTimeout(function () {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://s.pinimg.com/ct/core.js';
+        document.head.appendChild(s);
+        var el = document.getElementById('status');
+        if (el) el.textContent = 'injected';
+      }, INJECT_AT_MS);
+    })();
+  </script>
+</body>
+</html>
